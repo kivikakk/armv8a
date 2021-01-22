@@ -101,7 +101,14 @@ def data_abort(bits)
     ins_data_common("DFSC", bits)
 end
 
-bits = Accessor.new(64, Integer(ARGV[0]))
+if ARGV.length == 0
+  arg = Integer(`pbpaste`)
+  puts "ESR_EL1: 0x#{arg.to_s(16).rjust(16, "0")}"
+else
+  arg = Integer(ARGV[0])
+end
+
+bits = Accessor.new(64, arg)
 ec = bits[31..26]
 il = bits[25]
 iss = bits[24..0]
