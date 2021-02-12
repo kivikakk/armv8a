@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+bits = Integer(ARGV[0]).to_s(2).rjust(32, "0").chars.map { |c| c == "1" }.reverse
+
+m, a, c, sa, sa0, cp15ben, _, itd, sed, uma, _, _, i, _, dze, uct, ntwi, _, ntwe, wxn, _, iesb, _, span, e0e, ee, uci, * = bits
+
+puts "MMU: #{m ? "enabled" : "disabled"}"
+puts "Alignment: #{a ? "checking enabled" : "checking disabled"}"
+puts "Cacheability: #{c ? "no effect" : "non-cacheable"}"
+puts "SP alignment: #{sa ? "checking enabled" : "checking disabled"}"
+puts "EL0 SP alignment: #{sa0 ? "checking enabled" : "checking disabled"}"
+# puts "CP15 barrier operations: #{cp15ben ? "enabled" : "disabled; encodings undefined"}"
+# puts "ITD aka RAZ/WI: #{itd}"
+# puts "sed: #{sed}"
+puts "User Mask Access: #{uma ? "does nothing" : "any EL0 MRS/MSR that accesses DAIF is trapped to EL1"}"
+puts "instruction access cacheability: #{i ? "no effect" : "non-cacheable"}"
+puts "DC ZVA traps from EL0 to EL1: #{dze ? "not trapped" : "traps"}"
+puts "CTR_EL0 traps from EL0 to EL1: #{uct ? "not trapped" : "traps"}"
+puts "WFI traps from EL0 to EL1: #{ntwi ? "not trapped" : "traps"}"
+puts "WFE traps from EL0 to EL1: #{ntwe ? "not trapped" : "traps"}"
+puts "Write implies XN: #{wxn ? "forced for EL1/0" : "no effect"}"
+# puts "iesb: #{iesb}"
+puts "Set Privileged Acess Never when taking to EL1: #{span ? "unchanged" : "set"}"
+puts "EL0 endianness: #{e0e ? "big" : "little"}"
+puts "EL1 endianness: #{ee ? "big" : "little"}"
+puts "cache maintenance insns trap from EL0 to EL1: #{uci ? "not trapped" : "traps"}"
