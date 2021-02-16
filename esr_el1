@@ -76,6 +76,22 @@ def ins_abort(bits)
     ins_data_common("IFSC", bits)
 end
 
+def fp_trap_abort(bits)
+    cv = bits[24]
+    cond = bits[23..20]
+    if cv == 1
+        puts "COND field valid"
+        case cond
+        when 0b1110
+            puts "taken from AArch64"
+        else
+            printf "? %04b\n", cond
+        end
+    else
+        puts "COND field invalid"
+    end
+end
+
 def data_abort(bits)
     # D12-2792
     dfsc = bits[5..0]
@@ -112,10 +128,13 @@ bits = Accessor.new(64, arg)
 ec = bits[31..26]
 il = bits[25]
 iss = bits[24..0]
-puts "EC: 0b#{ec.to_s(2).rjust(6, "0")}"
-puts "IL: 0b#{il}"
-puts "ISS: 0b#{iss.to_s(2).rjust(25, "0")}"
-case bits[31..26]
+printf "EC: 0b%06b\n", ec
+printf "IL: 0b%b\n", il
+printf "ISS: 0b%025b\n", iss
+case ec
+when 0b000111
+    puts "Access to SVE, Advanced SIMD, or floating-point functionality trapped by CPACR_EL1.FPEN, CPTR_EL2.FPEN, CPTR_EL2.TFP, or CPTR_EL3.TFP control."
+    fp_trap_abort(bits)
 when 0b100001
     puts "Instruction Abort taken without a change in Exception level"
     ins_abort(bits)
@@ -123,6 +142,6 @@ when 0b100101
     puts "Data Abort taken without a change in Exception level"
     data_abort(bits)
 else
-    puts "unimpl"
+    printf "unimpl EC\n"
     exit 1
 end
